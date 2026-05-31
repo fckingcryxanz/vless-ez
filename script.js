@@ -1,28 +1,26 @@
 const currentUrl = window.location.href;
 const configRawUrl = currentUrl.endsWith('/') ? currentUrl + 'configs.txt' : currentUrl + '/configs.txt';
 
-// Ссылки на скачивание Happ для разных платформ
-const downloadLinks = {
-    android: "https://github.com", // Ссылка на гитхаб Happ
-    ios: "https://apple.com", 
-    windows: "https://github.com",
-    linux: "https://github.com",
-    macos: "https://github.com"
+const osNames = {
+    android: "Android",
+    ios: "iOS",
+    windows: "Windows",
+    linux: "Linux",
+    macos: "macOS"
 };
 
 const osSelect = document.getElementById('os-dropdown');
-const downloadButtonLink = document.getElementById('download-app-btn');
+const osDynamicText = document.getElementById('os-name-text');
+const osBtnText = document.getElementById('os-button-text');
 const happBtn = document.getElementById('happ-link');
 
-if (osSelect && downloadButtonLink) {
+if (osSelect && osDynamicText && osBtnText) {
     osSelect.addEventListener('change', (e) => {
-        const selectedOS = e.target.value;
+        const val = e.target.value;
+        osDynamicText.textContent = osNames[val];
+        osBtnText.textContent = osNames[val];
         
-        // Меняем ссылку кнопки скачивания приложения
-        downloadButtonLink.href = downloadLinks[selectedOS] || "#";
-        
-        // Корректируем импорт подписки для iOS через веб-сервис
-        if (selectedOS === 'ios') {
+        if (val === 'ios') {
             happBtn.href = `https://notjakob.com{configRawUrl}`;
         } else {
             happBtn.href = `happ://sub/add/${configRawUrl}`;
@@ -30,14 +28,10 @@ if (osSelect && downloadButtonLink) {
     });
 }
 
-// Первичная инициализация ссылок
 if (happBtn) happBtn.href = `happ://sub/add/${configRawUrl}`;
 
-const copyBtn = document.getElementById('copy-raw');
-if (copyBtn) {
-    copyBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText(configRawUrl).then(() => {
-            alert('Ссылка на подписку успешно скопирована!');
-        });
+document.getElementById('copy-raw').addEventListener('click', () => {
+    navigator.clipboard.writeText(configRawUrl).then(() => {
+        alert('Ссылка успешно скопирована!');
     });
-}
+});
