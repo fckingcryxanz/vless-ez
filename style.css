@@ -334,3 +334,14 @@ button[aria-haspopup="menu"],
     pointer-events: none !important;
 }
 
+/* Полностью и навсегда блокируем отображение Vercel Toolbar и его элементов */
+#vercel-preview-feedback,
+vercel-live-feedback,
+[id*="vercel-preview-feedback"],
+[class*="vercel-preview-feedback"],
+.vercel-preview-feedback-root {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
