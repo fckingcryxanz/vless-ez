@@ -18,7 +18,7 @@ function generateRandomCode() {
 
 // Команда /start в боте (меню как на твоем фото)
 bot.start((ctx) => {
-    ctx.reply('Привет! 👋\n\n🛡️ Oneok — включил и забыл.\n\n🚀 Мгновенная активация\n✅ Гибкие тарифы\n▶️ YouTube без рекламы', 
+    ctx.reply('Привет! 👋\n\n🛡️ Async — включил и забыл.\n\n🚀 Мгновенная активация\n✅ Гибкие тарифы\n▶️ YouTube без рекламы', 
         Markup.inlineKeyboard([
             [Markup.button.callback('Подключиться 🚀', 'connect')],
             [Markup.button.callback('💳 Продлить подписку', 'renew')],
