@@ -43,7 +43,7 @@ app.post('/login', (req, res) => {
 // Страница личного кабинета
 app.get('/user/:code', (req, res) => {
     const userCode = req.params.code;
-    const domain = process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'https://vercel.app';
+    const domain = process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'https://vless-ez.vercel.app/';
     
     // Передаем прямую валидную ссылку на будущую конфигурацию
     const configUrl = domain + '/user/' + userCode + '/config';
