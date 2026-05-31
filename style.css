@@ -345,3 +345,58 @@ vercel-live-feedback,
     visibility: hidden !important;
     pointer-events: none !important;
 }
+
+/* ==========================================
+   СТИЛИ СТРАНИЦЫ АВТОРИЗАЦИИ (LOGIN)
+   ========================================== */
+.login-card { 
+    max-width: 650px; /* Растянуто по горизонтали на 250px (до 650px) */
+    margin: 120px auto 0 auto; 
+    padding: 32px 40px;
+}
+
+.form-group { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px; 
+    margin-bottom: 24px; 
+}
+
+.form-group label { 
+    font-size: 12px; 
+    color: var(--text-secondary); 
+    font-weight: 600; 
+    text-transform: uppercase; 
+    letter-spacing: 0.8px;
+    font-family: 'Inter', sans-serif;
+    text-shadow: none;
+}
+
+.form-input { 
+    background-color: rgba(255, 255, 255, 0.03); 
+    border: 1px solid var(--border-color); 
+    border-radius: 10px; 
+    padding: 16px; 
+    color: #ffffff; 
+    font-size: 15px; 
+    outline: none; 
+    font-family: 'Fira Mono', monospace; 
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 10px rgba(0, 132, 255, 0.2);
+}
+
+/* Строгий, красивый белый LOGIN без голубого колхоза */
+.login-title { 
+    font-size: 24px; 
+    font-weight: 700; 
+    text-align: center; 
+    margin-bottom: 32px; 
+    color: #ffffff; 
+    letter-spacing: 1.5px;
+    font-family: 'Inter', sans-serif;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
