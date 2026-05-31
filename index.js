@@ -39,30 +39,41 @@ app.post('/api/webhook', (req, res) => {
     bot.handleUpdate(req.body, res);
 });
 
-// 2. ОТДАЧА СТИЛЕЙ (если они запрашиваются отдельно)
 app.get('/style.css', (req, res) => {
     res.sendFile(path.join(__dirname, 'style.css'));
 });
 
-// 3. БЕЗОПАСНАЯ ВЫДАЧА ТВОЕГО НОВОГО ШАБЛОНА MARZBAN
+// 3. УМНАЯ СБОРКА СТРАНИЦЫ ИЗ ВСЕХ ПОДФАЙЛОВ НА BACKEND
 app.get('/user/:code', (req, res) => {
     const userCode = req.params.code;
     const domain = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `https://vercel.app`;
     
-    // Читаем только template.html, никаких других подфайлов больше не требуем!
-    fs.readFile(path.join(__dirname, 'template.html'), 'utf8', (err, htmlContent) => {
-        if (err) {
-            return res.status(500).send('Ошибка: Файл template.html не найден в корне репозитория GitHub.');
-        }
+    try {
+        // Читаем все созданные подфайлы синхронно
+        const template = fs.readFileSync(path.join(__dirname, 'template.html'), 'utf8');
+        const header = fs.readFileSync(path.join(__dirname, 'header.html'), 'utf8');
+        let userInfo = fs.readFileSync(path.join(__dirname, 'user-info.html'), 'utf8');
+        const step1 = fs.readFileSync(path.join(__dirname, 'step1.html'), 'utf8');
+        const step2 = fs.readFileSync(path.join(__dirname, 'step2.html'), 'utf8');
+        const step3 = fs.readFileSync(path.join(__dirname, 'step3.html'), 'utf8');
 
-        // Подставляем твой 20-значный код и домен в сурс-код Marzban
-        let compiledHtml = htmlContent
-            .replace(/981373772__1799354/g, userCode) // Ищем чужой ID из сурса и меняем на динамический код
-            .replace(/981373772_1799354/g, userCode)  
-            .replace(/https:\/\/sub\.allcrash\.ru\/[A-Za-z0-9_]+/g, `happ://sub/add/${domain}/configs.txt?id=${userCode}`); // Подменяем ссылку добавления
+        // Подставляем 20-значный ID пользователя внутрь блока информации
+        userInfo = userInfo.replace(/\{\{USER_CODE\}\}/g, userCode);
+
+        // Собираем конструктор воедино
+        let compiledHtml = template
+            .replace(/\{\{USER_CODE\}\}/g, userCode)
+            .replace(/\{\.DOMAIN\}\}/g, domain)
+            .replace(/\{\{HEADER\}\}/g, header)
+            .replace(/\{\{USER_INFO\}\}/g, userInfo)
+            .replace(/\{\{STEP_1\}\}/g, step1)
+            .replace(/\{\{STEP_2\}\}/g, step2)
+            .replace(/\{\{STEP_3\}\}/g, step3);
 
         res.send(compiledHtml);
-    });
+    } catch (err) {
+        res.status(500).send('Ошибка сборки страницы: убедитесь, что файлы header.html, user-info.html, step1.html, step2.html, step3.html созданы в корне.');
+    }
 });
 
 app.get('/configs.txt', (req, res) => {
