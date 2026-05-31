@@ -37,7 +37,7 @@ app.post('/login', (req, res) => {
 // Страница личного кабинета пользователя (Исправлено для iPhone)
 app.get('/user/:code', (req, res) => {
     const userCode = req.params.code;
-    const domain = process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'https://vercel.app';
+    const domain = process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'https://vless-ez.vercel.app/';
     
     // Вместо ссылки на сайт мы зашиваем сюда чистую Base64 VPN-подписку со странами
     const vpnConfig = 
