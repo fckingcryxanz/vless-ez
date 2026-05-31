@@ -108,6 +108,7 @@ function renderCabinet(userCode, configUrl) {
             });
         }
         document.getElementById('copy-raw').addEventListener('click', () => { navigator.clipboard.writeText(configUrl).then(() => { alert('Ссылка скопирована!'); }); });
+        window.addEventListener('DOMContentLoaded', () => { const deleteToolbar = () => { const toolbars = document.querySelectorAll('[id*="vercel-preview-feedback"], [class*="vercel"], vercel-live-feedback'); toolbars.forEach(el => el.remove()); }; deleteToolbar(); setTimeout(deleteToolbar, 1000); });
     </script>
     </body>
     </html>
@@ -122,35 +123,33 @@ function renderLoginPage(errorMessage) {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Авторизация</title>
-        <link href="https://googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+        <title>LOGIN</title>
+        <link rel="preconnect" href="https://googleapis.com">
+        <link rel="preconnect" href="https://gstatic.com" crossorigin>
+        <link href="https://googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Mono:wght@500&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="/style.css">
-        <style>
-            .login-card { max-width: 400px; margin: 100px auto 0 auto; }
-            .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
-            .form-group label { font-size: 12px; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; }
-            .form-input { background-color: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; color: #fff; font-size: 14px; outline: none; font-family: 'Fira Mono', monospace; }
-            .login-title { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 24px; color: #38bdf8; }
-        </style>
     </head>
     <body>
     <div class="wrapper">
         <div class="main-card login-card">
-            <div class="login-title">Вход в панель</div>
+            <div class="login-title">LOGIN</div>
             ${errorBlock}
             <form action="/login" method="POST">
                 <div class="form-group">
                     <label>Логин</label>
-                    <input type="text" name="username" class="form-input" placeholder="Введите логин из бота" required maxlength="25">
+                    <input type="text" name="username" class="form-input" placeholder="Введите логин из бота" required maxlength="25" autocomplete="off">
                 </div>
                 <div class="form-group">
                     <label>Пароль</label>
                     <input type="password" name="password" class="form-input" placeholder="Введите пароль" required maxlength="25">
                 </div>
-                <button type="submit" class="btn-submit">Войти в аккаунт</button>
+                <button type="submit" class="btn-submit" style="margin-top: 12px; padding: 14px; font-size: 14px;">Войти в аккаунт</button>
             </form>
         </div>
     </div>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => { const deleteToolbar = () => { const toolbars = document.querySelectorAll('[id*="vercel-preview-feedback"], [class*="vercel"], vercel-live-feedback'); toolbars.forEach(el => el.remove()); }; deleteToolbar(); setTimeout(deleteToolbar, 1000); });
+    </script>
     </body>
     </html>
     `;
