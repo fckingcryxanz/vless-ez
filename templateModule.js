@@ -118,7 +118,7 @@ function renderCabinet(userCode, configUrl) {
                 
                 // Исправлено для iPhone: при выборе iOS ссылка на кнопке меняется СРАЗУ, до клика
                 if (val === 'ios') { 
-                    happLink.setAttribute('href', "https://notjakob.com" + baseConfigUrl);
+                    happLink.setAttribute('href', 'https://dns.' + 'notjakob.com/#' + baseConfigUrl);
                 } else { 
                     happLink.setAttribute('href', "happ://sub/add/" + cleanUrl);
                 }
