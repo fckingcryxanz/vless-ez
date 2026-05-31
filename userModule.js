@@ -1,0 +1,49 @@
+module.exports = function(userCode) {
+    return `
+    <div class="main-card" style="margin-bottom: 16px;">
+        <div class="user-profile">
+            <div class="status-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="user-details">
+                <h3>${userCode}</h3>
+                <span>Истекает через 3 дня</span>
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-item" style="background: linear-gradient(180deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%); border: 1px solid rgba(56, 189, 248, 0.15);">
+                <div class="info-label">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #38bdf8;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    Имя пользователя
+                </div>
+                <div class="info-value" style="color: #ffffff;">${userCode}</div>
+            </div>
+
+            <div class="info-item" style="background: linear-gradient(180deg, rgba(16, 185, 129, 0.04) 0%, rgba(16, 185, 129, 0) 100%); border: 1px solid rgba(16, 185, 129, 0.2);">
+                <div class="info-label">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #10b981;"><polyline points="20 6 9 17 4 12"/></svg>
+                    Статус
+                </div>
+                <div class="info-value active-text" style="color: #10b981; font-weight: 700;">Активна</div>
+            </div>
+
+            <div class="info-item" style="background: linear-gradient(180deg, rgba(239, 68, 68, 0.04) 0%, rgba(239, 68, 68, 0) 100%); border: 1px solid rgba(239, 68, 68, 0.15);">
+                <div class="info-label">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444;"><rect x="3" y="4" width="18" height="16" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="4"/><line x1="8" y1="2" x2="8" y2="4"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Истекает
+                </div>
+                <div class="info-value" style="color: #ffffff;">04 июня, 2026</div>
+            </div>
+
+            <div class="info-item" style="background: linear-gradient(180deg, rgba(245, 158, 11, 0.04) 0%, rgba(245, 158, 11, 0) 100%); border: 1px solid rgba(245, 158, 11, 0.15);">
+                <div class="info-label">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #f59e0b;"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
+                    Трафик
+                </div>
+                <div class="info-value" style="color: #ffffff;">0 / ∞</div>
+            </div>
+        </div>
+    </div>
+    `;
+};
