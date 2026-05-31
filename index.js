@@ -29,21 +29,21 @@ app.get('/', (req, res) => {
     res.send(templateBuilder.renderLoginPage(''));
 });
 
-// ЖЕЛЕЗОБЕТОННАЯ ПРОВЕРКА ФОРМЫ АВТОРИЗАЦИИ (ИСПРАВЛЕНО!)
+// ПРОСТАЯ И НАДЕЖНАЯ ПРОВЕКА АВТОРИЗАЦИИ (ИСПРАВЛЕНО НА 100%)
 app.post('/login', (req, res) => {
     const username = req.body.username ? req.body.username.trim() : '';
     const password = req.body.password ? req.body.password.trim() : '';
     
-    // Проверяем формат логина через регулярное выражение (строго цифры и окончание _AsyncDNS)
-    const match = username.match(/^(\\d+)_AsyncDNS$/);
-    
-    if (match) {
-        const tgId = match[1]; // Безопасно вытаскиваем чистый Telegram ID из логина
+    // Проверяем базовую структуру, чтобы логин и пароль содержали наши ключевые слова
+    if (username.endsWith('_AsyncDNS') && password.startsWith('AsyncDNS$')) {
+        // Вытаскиваем чистый ID из логина (убираем _AsyncDNS)
+        const idFromLogin = username.replace('_AsyncDNS', '');
+        // Вытаскиваем чистый ID из пароля (убираем AsyncDNS$)
+        const idFromPassword = password.replace('AsyncDNS$', '');
         
-        // Сверяем, равен ли пароль маске AsyncDNS$ + вытащенный ID
-        if (password === `AsyncDNS$\${tgId}`) {
-            // Если данные верны — делаем перенаправление в личный кабинет пользователя
-            return res.redirect(`/user/\${username}`);
+        // Если ID в логине и ID в пароле полностью совпали — пускаем!
+        if (idFromLogin === idFromPassword && idFromLogin.length > 0) {
+            return res.redirect('/user/' + username);
         }
     }
     
@@ -71,8 +71,8 @@ app.get('/user/:code/config', (req, res) => {
     res.set('Content-Type', 'text/plain; charset=utf-8');
     
     const testServers = 
-        'vless://8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c@194.135.24.81:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=google.com&fp=chrome&pbk=q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l&sid=a1b2c3d4&type=tcp#🇩🇪 Germany - Frankfurt 01\\n' +
-        'vless://8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c@195.122.31.42:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=google.com&fp=chrome&pbk=q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l&sid=a1b2c3d4&type=tcp#🇳🇱 Netherlands - Amsterdam 02\\n' +
+        'vless://8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c@194.135.24.81:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=google.com&fp=chrome&pbk=q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l&sid=a1b2c3d4&type=tcp#🇩🇪 Germany - Frankfurt 01\n' +
+        'vless://8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c@195.122.31.42:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=google.com&fp=chrome&pbk=q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l&sid=a1b2c3d4&type=tcp#🇳🇱 Netherlands - Amsterdam 02\n' +
         'vless://8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c@185.200.11.95:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=google.com&fp=chrome&pbk=q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l&sid=a1b2c3d4&type=tcp#🇫🇮 Finland - Helsinki 03';
 
     const base64Servers = Buffer.from(testServers).toString('base64');
