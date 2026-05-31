@@ -25,20 +25,22 @@ bot.start((ctx) => {
 bot.action('connect', async (ctx) => {
     const tgId = ctx.from.id; // Уникальный неизменяемый ID человека в Telegram
     
-    // Формируем постоянные данные по твоей схеме
+    // Формируем постоянные данные
     const userLogin = `${tgId}_AsyncDNS`;
     const userPassword = `AsyncDNS$${tgId}`;
     
     const domain = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `https://vercel.app`;
     
     await ctx.answerCbQuery();
-    // Использование знака \` делает текст кликабельным (копируется при нажатии)
+    
+    // Отправляем чистый HTML-текст, где тег <code> делает данные 100% кликабельными без багов
     await ctx.reply(
-        `✨ Ваши постоянные данные для входа готовы!\n\n` +
+        `✨ <b>Ваши постоянные данные для входа готовы!</b>\n\n` +
         `🌐 Наш сайт: ${domain}\n\n` +
-        `👤 Логин (нажми для копирования):\n\`${userLogin}\`\n\n` +
-        `🔑 Пароль (нажми для копирования):\n\`${userPassword}\`\n\n` +
-        `⚠️ Вставьте эти данные в форму LOGIN на главной странице сайта.`
+        `👤 Логин (нажми для копирования):\n<code>${userLogin}</code>\n\n` +
+        `🔑 Пароль (нажми для копирования):\n<code>${userPassword}</code>\n\n` +
+        `⚠️ Вставьте эти данные в форму LOGIN на главной странице сайта.`,
+        { parse_mode: 'HTML' }
     );
 });
 
