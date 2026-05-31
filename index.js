@@ -2,8 +2,10 @@ const express = require('express');
 const { Telegraf, Markup } = require('telegraf');
 const crypto = require('crypto');
 const path = require('path');
-const fs = require('fs');
 const app = express();
+
+// Импортируем только HTML-шаблон
+const templateBuilder = require('./templateModule');
 
 app.use(express.json());
 
@@ -39,41 +41,21 @@ app.post('/api/webhook', (req, res) => {
     bot.handleUpdate(req.body, res);
 });
 
+
+// 2. РАЗДАЧА ТВОЕГО ФАЙЛА style.css НАПРЯМУЮ
 app.get('/style.css', (req, res) => {
     res.sendFile(path.join(__dirname, 'style.css'));
 });
 
-// 3. УМНАЯ СБОРКА СТРАНИЦЫ ИЗ ВСЕХ ПОДФАЙЛОВ НА BACKEND
+
+// 3. ОТДАЧА СТРАНИЦЫ ИЗ HTML-МОДУЛЯ
 app.get('/user/:code', (req, res) => {
     const userCode = req.params.code;
     const domain = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `https://vercel.app`;
-    
-    try {
-        // Читаем все созданные подфайлы синхронно
-        const template = fs.readFileSync(path.join(__dirname, 'template.html'), 'utf8');
-        const header = fs.readFileSync(path.join(__dirname, 'header.html'), 'utf8');
-        let userInfo = fs.readFileSync(path.join(__dirname, 'user-info.html'), 'utf8');
-        const step1 = fs.readFileSync(path.join(__dirname, 'step1.html'), 'utf8');
-        const step2 = fs.readFileSync(path.join(__dirname, 'step2.html'), 'utf8');
-        const step3 = fs.readFileSync(path.join(__dirname, 'step3.html'), 'utf8');
+    const configUrl = `${domain}/configs.txt?id=${userCode}`;
 
-        // Подставляем 20-значный ID пользователя внутрь блока информации
-        userInfo = userInfo.replace(/\{\{USER_CODE\}\}/g, userCode);
-
-        // Собираем конструктор воедино
-        let compiledHtml = template
-            .replace(/\{\{USER_CODE\}\}/g, userCode)
-            .replace(/\{\{DOMAIN\}\}/g, domain)
-            .replace(/\{\{HEADER\}\}/g, header)
-            .replace(/\{\{USER_INFO\}\}/g, userInfo)
-            .replace(/\{\{STEP_1\}\}/g, step1)
-            .replace(/\{\{STEP_2\}\}/g, step2)
-            .replace(/\{\{STEP_3\}\}/g, step3);
-
-        res.send(compiledHtml);
-    } catch (err) {
-        res.status(500).send('Ошибка сборки страницы: убедитесь, что файлы header.html, user-info.html, step1.html, step2.html, step3.html созданы в корне.');
-    }
+    const htmlPage = templateBuilder(userCode, configUrl);
+    res.send(htmlPage);
 });
 
 app.get('/configs.txt', (req, res) => {
@@ -81,6 +63,6 @@ app.get('/configs.txt', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Бэкенд запущен`));
+app.listen(PORT, () => console.log('Сервер запущен'));
 
 module.exports = app;
