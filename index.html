@@ -3,39 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Моя Подписка V2Ray</title>
-    <style>
-        body { background-color: #0b0f19; color: #f3f4f6; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .card { background-color: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 24px; width: 90%; max-width: 500px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); }
-        .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1f2937; padding-bottom: 16px; margin-bottom: 20px; }
-        .title { font-size: 20px; font-weight: bold; color: #38bdf8; }
-        .status-box { background-color: #1f2937; border-radius: 12px; padding: 16px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .status-item { font-size: 14px; color: #9ca3af; }
-        .status-value { font-size: 16px; font-weight: bold; color: #f3f4f6; margin-top: 4px; }
-        .status-active { color: #10b981; }
-        .btn { background-color: #0284c7; color: white; border: none; border-radius: 12px; padding: 14px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; display: block; box-sizing: border-box; margin-top: 10px; transition: 0.2s; }
-        .btn:hover { background-color: #0369a1; }
-        .apps-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; color: #9ca3af; }
-    </style>
+    <title>Subscription Panel</title>
+    <!-- Подключаем наш отдельный файл со стилями -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="card">
-        <div class="header">
-            <div class="title">||| Личный Кабинет DNS</div>
+
+<div class="container">
+    
+    <!-- Верхний бар -->
+    <div class="navbar">
+        <div class="logo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5v14M22 9v6M7 7v10M2 10v4"/></svg>
+            Subscription
         </div>
-        <div class="status-box">
-            <div>
-                <div class="status-item">Статус</div>
-                <div class="status-value status-active">● Активна</div>
+        <div class="nav-icons">
+            <div class="icon-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
             </div>
-            <div>
-                <div class="status-item">Трафик</div>
-                <div class="status-value">Безлимит</div>
+            <div class="icon-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>
             </div>
         </div>
-        <div class="apps-title">Установка и настройка:</div>
-        <!-- Кнопка автоматического добавления подписки прямо в Happ -->
-        <a href="happ://sub/add/https://github.io" class="btn">⚡ Добавить подписку в Happ</a>
     </div>
+
+    <!-- Карточка пользователя -->
+    <div class="card">
+        <div class="user-header">
+            <div class="check-badge">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="user-info-text">
+                <h3>BrawlStars_User</h3>
+                <span>Истекает через 3 дня</span>
+            </div>
+        </div>
+
+        <div class="grid-stats">
+            <div class="stat-box">
+                <div class="stat-label">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Имя пользователя
+                </div>
+                <div class="stat-value" style="color: #38bdf8;">Brawl_DNS_Private</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"/></svg>
+                    Статус
+                </div>
+                <div class="stat-value stat-active">
+                    <span style="display:inline-block; width:6px; height:6px; background-color:var(--accent-green); border-radius:50%;"></span>
+                    Активна
+                </div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="16" y1="2" x2="16" y2="4"></line><line x1="8" y1="2" x2="8" y2="4"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    Истекает
+                </div>
+                <div class="stat-value" style="color: #ef4444;">04 июня, 2026</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5v14M22 9v6M7 7v10M2 10v4"/></svg>
+                    Трафик
+                </div>
+                <div class="stat-value">0 / ∞</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Раздел установки -->
+    <div class="card">
+        <div class="section-title">Установка</div>
+        
+        <div class="app-tabs">
+            <button class="app-tab active">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"><line x1="4" y1="21" x2="4" y2="3"></line><line x1="20" y1="21" x2="20" y2="3"></line><line x1="4" y1="12" x2="20" y2="12"></line></svg>
+                Happ
+            </button>
+        </div>
+
+        <div class="action-box">
+            <p>Нажмите на кнопку ниже — мобильное приложение откроется на вашем устройстве, и персональная DNS-подписка добавится автоматически.</p>
+            
+            <a href="happ://sub/add/https://github.io" class="btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="12" y2="12"></line></svg>
+                Добавить подписку
+            </a>
+        </div>
+    </div>
+
+</div>
+
 </body>
 </html>
