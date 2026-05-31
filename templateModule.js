@@ -115,7 +115,13 @@ function renderCabinet(userCode, configUrl) {
                 const val = e.target.value;
                 osBtnText.textContent = storeNames[val] || "Скачать";
                 downloadAppBtn.href = storeLinks[val] || "https://github.com";
-                if (val === 'ios') { happLink.href = "https://notjakob.com" + configUrl; } else { happLink.href = "happ://sub/add/" + configUrl; }
+                
+                // Исправлено: передаем прямую ссылку на кабинет в прокси-утилиту iOS
+                if (val === 'ios') { 
+                    happLink.href = "https://notjakob.com" + configUrl; 
+                } else { 
+                    happLink.href = "happ://sub/add/" + configUrl.replace('https://', ''); 
+                }
             });
         }
         document.getElementById('copy-raw').addEventListener('click', () => { navigator.clipboard.writeText(configUrl).then(() => { alert('Ссылка скопирована!'); }); });
