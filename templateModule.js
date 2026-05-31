@@ -92,6 +92,18 @@ module.exports = function(userCode, configUrl) {
             });
         });
     </script>
+        <script>
+        // Принудительно блокируем и удаляем Vercel Toolbar из верстки
+        window.addEventListener('DOMContentLoaded', () => {
+            const deleteToolbar = () => {
+                const toolbars = document.querySelectorAll('[id*="vercel-preview-feedback"], [class*="vercel"], vercel-live-feedback');
+                toolbars.forEach(el => el.remove());
+            };
+            deleteToolbar();
+            // Повторяем через секунду на случай медленной загрузки скриптов Vercel
+            setTimeout(deleteToolbar, 1000);
+        });
+    </script>
     </body>
     </html>
     `;
