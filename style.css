@@ -347,27 +347,33 @@ vercel-live-feedback,
 }
 
 /* ==========================================
-   СТИЛИ СТРАНИЦЫ АВТОРИЗАЦИИ (LOGIN)
+   ОБНОВЛЕННЫЕ СТИЛИ СТРАНИЦЫ АВТОРИЗАЦИИ (LOGIN)
    ========================================== */
 .login-card { 
-    max-width: 650px; /* Растянуто по горизонтали на 250px (до 650px) */
-    margin: 120px auto 0 auto; 
-    padding: 32px 40px;
+    width: 100%;
+    max-width: 580px;      /* Растянули строго на 15 см по горизонтали */
+    min-height: 380px;     /* Растянули строго на 10 см по вертикали */
+    margin: 100px auto 0 auto; 
+    padding: 48px 48px;    /* Увеличили внутренние отступы для объема */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Центрируем контент внутри массивной карты */
 }
 
 .form-group { 
     display: flex; 
     flex-direction: column; 
-    gap: 10px; 
-    margin-bottom: 24px; 
+    gap: 12px; 
+    margin-bottom: 28px; 
 }
 
 .form-group label { 
-    font-size: 12px; 
+    font-size: 13px; 
     color: var(--text-secondary); 
     font-weight: 600; 
     text-transform: uppercase; 
-    letter-spacing: 0.8px;
+    letter-spacing: 1px;
     font-family: 'Inter', sans-serif;
     text-shadow: none;
 }
@@ -376,9 +382,9 @@ vercel-live-feedback,
     background-color: rgba(255, 255, 255, 0.03); 
     border: 1px solid var(--border-color); 
     border-radius: 10px; 
-    padding: 16px; 
+    padding: 18px;         /* Сделали поля ввода крупнее и солиднее */
     color: #ffffff; 
-    font-size: 15px; 
+    font-size: 16px; 
     outline: none; 
     font-family: 'Fira Mono', monospace; 
     transition: border-color 0.2s, box-shadow 0.2s;
@@ -386,17 +392,17 @@ vercel-live-feedback,
 
 .form-input:focus {
     border-color: var(--accent-blue);
-    box-shadow: 0 0 10px rgba(0, 132, 255, 0.2);
+    box-shadow: 0 0 15px rgba(0, 132, 255, 0.25);
 }
 
-/* Строгий, красивый белый LOGIN без голубого колхоза */
 .login-title { 
-    font-size: 24px; 
+    font-size: 28px;       /* Увеличили размер строгого белого LOGIN */
     font-weight: 700; 
     text-align: center; 
-    margin-bottom: 32px; 
+    margin-bottom: 36px; 
     color: #ffffff; 
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
     font-family: 'Inter', sans-serif;
     text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
+
