@@ -4,13 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subscription Management</title>
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .wrapper {
+            max-width: 560px !important; /* Растягиваем вкладки по горизонтали на 7 см */
+        }
+        .main-card {
+            background-color: rgba(255, 255, 255, 0.08) !important; /* Более светлый тон */
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(25px) !important; /* Больше красивой прозрачности */
+        }
+        .guide-card {
+            background-color: rgba(255, 255, 255, 0.04) !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+        .info-item {
+            background-color: rgba(255, 255, 255, 0.03) !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+        .btn-action {
+            background-color: rgba(56, 189, 248, 0.15) !important;
+            color: #38bdf8 !important;
+            border: 1px solid rgba(56, 189, 248, 0.3) !important;
+        }
+    </style>
 </head>
 <body>
 
 <div class="wrapper">
     
-    <!-- Верхний бар -->
+    <!-- Шапка страницы -->
     <div class="header-panel">
         <div class="brand">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5v14M22 9v6M7 7v10M2 10v4"/></svg>
@@ -33,7 +56,8 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
             <div class="user-details">
-                <h3>BrawlStars_User</h3>
+                <!-- Сюда бэкенд вставит 20-значный случайный код -->
+                <h3>{{USER_CODE}}</h3>
                 <span>Истекает через 3 дня</span>
             </div>
         </div>
@@ -41,7 +65,7 @@
         <div class="info-grid">
             <div class="info-item">
                 <div class="info-label">Имя пользователя</div>
-                <div class="info-value" style="color: #38bdf8;">Brawl_DNS_Private</div>
+                <div class="info-value" id="dynamic-user-name" style="color: #38bdf8;">User_Loading</div>
             </div>
             <div class="info-item">
                 <div class="info-label">Статус</div>
@@ -58,7 +82,7 @@
         </div>
     </div>
 
-    <!-- Раздел Установки и кастомного гайда -->
+    <!-- Раздел Установки и гайда -->
     <div class="main-card">
         <div class="card-title-bar">
             <div class="section-head">Установка</div>
@@ -75,10 +99,9 @@
             <div class="tab-item">Happ</div>
         </div>
 
-        <!-- Контент гайда строго по структуре фото -->
         <div class="guide-list">
             
-            <!-- Шаг 1 -->
+            <!-- Этап 1 -->
             <div class="guide-card">
                 <div class="guide-icon-box">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -86,14 +109,14 @@
                 <div class="guide-content">
                     <div class="guide-h4">Установка приложения</div>
                     <p>Выберите подходящую версию для вашего устройства, нажмите на кнопку ниже и установите приложение.</p>
-                    <a href="https://github.com" target="_blank" class="btn-action">
+                    <a href="https://google.com" id="download-app-btn" target="_blank" class="btn-action">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                        <span id="os-button-text">Android</span>
+                        <span id="os-button-text">Google Play</span>
                     </a>
                 </div>
             </div>
 
-            <!-- Шаг 2 -->
+            <!-- Этап 2 -->
             <div class="guide-card">
                 <div class="guide-icon-box">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5v14M22 9v6M7 7v10M2 10v4"/></svg>
@@ -108,7 +131,7 @@
                 </div>
             </div>
 
-            <!-- Шаг 3 -->
+            <!-- Этап 3 -->
             <div class="guide-card">
                 <div class="guide-icon-box">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="m4.93 4.93 14.14 14.14"/></svg>
@@ -124,6 +147,57 @@
 
 </div>
 
-<script src="./script.js"></script>
+<script>
+    const userCode = "{{USER_CODE}}";
+    const domain = "{{DOMAIN}}";
+    const configUrl = domain + "/configs.txt?id=" + userCode;
+
+    // Авто-настройка обрезанного имени пользователя на фронтенде
+    document.getElementById('dynamic-user-name').textContent = "User_" + userCode.slice(0, 6);
+
+    const osSelect = document.getElementById('os-dropdown');
+    const osBtnText = document.getElementById('os-button-text');
+    const downloadAppBtn = document.getElementById('download-app-btn');
+    const happLink = document.getElementById('happ-link');
+
+    // Дефолтная инициализация ссылки для Happ
+    happLink.href = "happ://sub/add/" + configUrl;
+
+    const storeLinks = {
+        android: "https://google.com",
+        ios: "https://apple.com",
+        windows: "https://github.com",
+        linux: "https://github.com",
+        macos: "https://github.com"
+    };
+
+    const storeNames = {
+        android: "Google Play",
+        ios: "App Store",
+        windows: "Windows (GitHub)",
+        linux: "Linux (GitHub)",
+        macos: "macOS (GitHub)"
+    };
+
+    if (osSelect && osBtnText && downloadAppBtn) {
+        osSelect.addEventListener('change', (e) => {
+            const val = e.target.value;
+            osBtnText.textContent = storeNames[val];
+            downloadAppBtn.href = storeLinks[val];
+            
+            if (val === 'ios') {
+                happLink.href = "https://notjakob.com" + configUrl;
+            } else {
+                happLink.href = "happ://sub/add/" + configUrl;
+            }
+        });
+    }
+
+    document.getElementById('copy-raw').addEventListener('click', () => {
+        navigator.clipboard.writeText(configUrl).then(() => {
+            alert('Ссылка на подписку скопирована!');
+        });
+    });
+</script>
 </body>
 </html>
