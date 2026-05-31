@@ -323,3 +323,14 @@ body {
     background-color: #0066cc;
     box-shadow: 0 0 25px rgba(0, 132, 255, 0.7); /* Мощный неон при наведении */
 }
+
+/* Полностью скрываем оригинальную плавающую кнопку меню Marzban */
+[class*="mantine-Menu-root"], 
+button[aria-haspopup="menu"],
+.mantine-Menu-root {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
