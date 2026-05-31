@@ -347,18 +347,36 @@ vercel-live-feedback,
 }
 
 /* ==========================================
-   ОБНОВЛЕННЫЕ СТИЛИ СТРАНИЦЫ АВТОРИЗАЦИИ (LOGIN)
+   ИДЕАЛЬНЫЕ РАЗМЕРЫ СТРАНИЦЫ АВТОРИЗАЦИИ (30х25 СМ)
    ========================================== */
 .login-card { 
-    width: 100%;
-    max-width: 580px;      /* Растянули строго на 15 см по горизонтали */
-    min-height: 380px;     /* Растянули строго на 10 см по вертикали */
+    width: 100% !important;
+    max-width: 580px !important;   /* Строго 30 см по горизонтали */
+    height: 480px !important;      /* Строго 25 см по вертикали */
+    min-height: 480px !important;
     margin: 100px auto 0 auto; 
-    padding: 48px 48px;    /* Увеличили внутренние отступы для объема */
+    padding: 64px 48px !important; /* Большие отступы для объема */
+    overflow: visible !important;  /* Возвращаем видимость элементов */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Центрируем контент внутри массивной карты */
+    justify-content: center;       /* Центрируем все поля строго по вертикали */
+    background-color: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    box-shadow: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Возвращаем отображение формы и заголовка */
+.login-card form,
+.login-card .login-title {
+    display: block !important;
+}
+
+.main-card:hover.login-card {
+    border-color: rgba(56, 189, 248, 0.3);
+    box-shadow: 0 0 40px rgba(56, 189, 248, 0.15); /* Неоновое свечение при наведении */
 }
 
 .form-group { 
@@ -375,14 +393,13 @@ vercel-live-feedback,
     text-transform: uppercase; 
     letter-spacing: 1px;
     font-family: 'Inter', sans-serif;
-    text-shadow: none;
 }
 
 .form-input { 
     background-color: rgba(255, 255, 255, 0.03); 
     border: 1px solid var(--border-color); 
     border-radius: 10px; 
-    padding: 18px;         /* Сделали поля ввода крупнее и солиднее */
+    padding: 18px;              /* Большие удобные поля ввода */
     color: #ffffff; 
     font-size: 16px; 
     outline: none; 
@@ -396,13 +413,12 @@ vercel-live-feedback,
 }
 
 .login-title { 
-    font-size: 28px;       /* Увеличили размер строгого белого LOGIN */
+    font-size: 28px;            /* Крупный строгий белый LOGIN */
     font-weight: 700; 
     text-align: center; 
-    margin-bottom: 36px; 
+    margin-bottom: 40px; 
     color: #ffffff; 
     letter-spacing: 2px;
     font-family: 'Inter', sans-serif;
     text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
-
