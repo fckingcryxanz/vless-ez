@@ -73,7 +73,8 @@ function renderCabinet(userCode, configUrl) {
                     <div class="guide-content">
                         <div class="guide-h4">Установка приложения</div>
                         <p>Выберите подходящую версию для вашего устройства, нажмите на кнопку ниже и установите приложение.</p>
-                        <a href="https://google.com" id="download-app-btn" target="_blank" class="btn-action">Скачать</a>
+                        <!-- Стартовая ссылка по умолчанию на новый Google Play Happ -->
+                        <a href="https://play.google.com/store/apps/details?id=com.happproxy&hl=en" id="download-app-btn" target="_blank" class="btn-action"><span id="os-button-text">Google Play</span></a>
                     </div>
                 </div>
                 <div class="guide-card">
@@ -96,19 +97,28 @@ function renderCabinet(userCode, configUrl) {
     </div>
     <script>
         const osSelect = document.getElementById('os-dropdown');
+        const osBtnText = document.getElementById('os-button-text');
         const downloadAppBtn = document.getElementById('download-app-btn');
         const happLink = document.getElementById('happ-link');
         const configUrl = "${configUrl}";
-        const storeLinks = { android: "https://google.com", ios: "https://apple.com" };
-        if (osSelect && downloadAppBtn) {
+        
+        // Обновленные новые официальные ссылки на Happ из твоего сообщения
+        const storeLinks = { 
+            android: "https://play.google.com/store/apps/details?id=com.happproxy&hl=en", 
+            ios: "https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973" 
+        };
+        
+        const storeNames = { android: "Google Play", ios: "App Store", windows: "Windows (GitHub)", linux: "Linux (GitHub)", macos: "macOS (GitHub)" };
+        
+        if (osSelect && downloadAppBtn && osBtnText) {
             osSelect.addEventListener('change', (e) => {
                 const val = e.target.value;
-                downloadAppBtn.href = storeLinks[val] || "#";
+                osBtnText.textContent = storeNames[val] || "Скачать";
+                downloadAppBtn.href = storeLinks[val] || "https://github.com";
                 if (val === 'ios') { happLink.href = "https://notjakob.com" + configUrl; } else { happLink.href = "happ://sub/add/" + configUrl; }
             });
         }
         document.getElementById('copy-raw').addEventListener('click', () => { navigator.clipboard.writeText(configUrl).then(() => { alert('Ссылка скопирована!'); }); });
-        window.addEventListener('DOMContentLoaded', () => { const deleteToolbar = () => { const toolbars = document.querySelectorAll('[id*="vercel-preview-feedback"], [class*="vercel"], vercel-live-feedback'); toolbars.forEach(el => el.remove()); }; deleteToolbar(); setTimeout(deleteToolbar, 1000); });
     </script>
     </body>
     </html>
@@ -124,9 +134,7 @@ function renderLoginPage(errorMessage) {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>LOGIN</title>
-        <link rel="preconnect" href="https://googleapis.com">
-        <link rel="preconnect" href="https://gstatic.com" crossorigin>
-        <link href="https://googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Mono:wght@500&display=swap" rel="stylesheet">
+        <link href="https://googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="/style.css">
     </head>
     <body>
@@ -137,19 +145,16 @@ function renderLoginPage(errorMessage) {
             <form action="/login" method="POST">
                 <div class="form-group">
                     <label>Логин</label>
-                    <input type="text" name="username" class="form-input" placeholder="Введите логин из бота" required maxlength="25" autocomplete="off">
+                    <input type="text" name="username" class="form-input" placeholder="Введите логин из бота" required autocomplete="off">
                 </div>
                 <div class="form-group">
                     <label>Пароль</label>
-                    <input type="password" name="password" class="form-input" placeholder="Введите пароль" required maxlength="25">
+                    <input type="password" name="password" class="form-input" placeholder="Введите пароль" required>
                 </div>
-                <button type="submit" class="btn-submit" style="margin-top: 12px; padding: 14px; font-size: 14px;">Войти в аккаунт</button>
+                <button type="submit" class="btn-submit">Войти в аккаунт</button>
             </form>
         </div>
     </div>
-    <script>
-        window.addEventListener('DOMContentLoaded', () => { const deleteToolbar = () => { const toolbars = document.querySelectorAll('[id*="vercel-preview-feedback"], [class*="vercel"], vercel-live-feedback'); toolbars.forEach(el => el.remove()); }; deleteToolbar(); setTimeout(deleteToolbar, 1000); });
-    </script>
     </body>
     </html>
     `;
