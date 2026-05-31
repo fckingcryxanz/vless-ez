@@ -39,29 +39,35 @@ app.post('/api/webhook', (req, res) => {
     bot.handleUpdate(req.body, res);
 });
 
-// 2. РАЗДАЧА СТАТИЧЕСКИХ СТИЛЕЙ
+// 2. РАЗДАЧА СТИЛЕЙ
 app.get('/style.css', (req, res) => {
     res.sendFile(path.join(__dirname, 'style.css'));
 });
 
-// 3. ОБРАБОТКА ДИНАМИЧЕСКОГО ПОДФАЙЛА (template.html)
+// 3. СБОРКА ИЗ ПОДФАЙЛОВ НА BACKEND
 app.get('/user/:code', (req, res) => {
     const userCode = req.params.code;
     const domain = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `https://vercel.app`;
     
-    // Читаем наш HTML-подфайл с диска
-    fs.readFile(path.join(__dirname, 'template.html'), 'utf8', (err, htmlContent) => {
-        if (err) {
-            return res.status(500).send('Ошибка бэкенда: подфайл шаблона template.html не найден в корне проекта.');
-        }
+    try {
+        // Читаем все файлы синхронно для мгновенной сборки страницы
+        const template = fs.readFileSync(path.join(__dirname, 'template.html'), 'utf8');
+        const step1 = fs.readFileSync(path.join(__dirname, 'step1.html'), 'utf8');
+        const step2 = fs.readFileSync(path.join(__dirname, 'step2.html'), 'utf8');
+        const step3 = fs.readFileSync(path.join(__dirname, 'step3.html'), 'utf8');
 
-        // Подставляем переменные внутрь подфайла на лету перед отправкой в браузер
-        let customizedHtml = htmlContent
+        // Собираем конструктор вместе и подставляем 20-значные коды
+        let compiledHtml = template
             .replace(/\{\{USER_CODE\}\}/g, userCode)
-            .replace(/\{\{DOMAIN\}\}/g, domain);
+            .replace(/\{\{DOMAIN\}\}/g, domain)
+            .replace(/\{\{STEP_1\}\}/g, step1)
+            .replace(/\{\{STEP_2\}\}/g, step2)
+            .replace(/\{\{STEP_3\}\}/g, step3);
 
-        res.send(customizedHtml);
-    });
+        res.send(compiledHtml);
+    } catch (err) {
+        res.status(500).send('Ошибка сборки страницы: Проверьте наличие файлов step1.html, step2.html, step3.html');
+    }
 });
 
 app.get('/configs.txt', (req, res) => {
