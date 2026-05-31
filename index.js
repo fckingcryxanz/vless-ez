@@ -34,26 +34,23 @@ app.post('/login', (req, res) => {
     res.send(templateBuilder.renderLoginPage('Неверный логин или пароль. Скопируйте данные из бота.'));
 });
 
-// УМНЫЙ РОУТ: ОДНА ССЫЛКА ДЛЯ САЙТА И ДЛЯ HAPP (КАК У ONEOK)
+// Страница личного кабинета пользователя (Исправлено для iPhone)
 app.get('/user/:code', (req, res) => {
     const userCode = req.params.code;
-    const userAgent = req.headers['user-agent'] || '';
+    const domain = process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'https://vercel.app';
     
-    // Проверяем: если запрос пришел от приложения (Happ, v2ray, vless-клиенты)
-    if (userAgent.toLowerCase().includes('happ') || userAgent.toLowerCase().includes('v2ray') || userAgent.toLowerCase().includes('dart')) {
-        res.set('Content-Type', 'text/plain; charset=utf-8');
-        
-        // База РАБОЧИХ бесплатных прокси-серверов Oneok (Германия, Нидерланды, Финляндия)
-        const vpnConfig = 
-            `vless://8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c@194.135.24.81:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=google.com&fp=chrome&pbk=q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l&sid=a1b2c3d4&type=tcp#🇩🇪 Germany - Frankfurt 01\n` +
-            `vless://8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c@195.122.31.42:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=google.com&fp=chrome&pbk=q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l&sid=a1b2c3d4&type=tcp#🇳🇱 Netherlands - Amsterdam 02\n` +
-            `vless://8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c@185.200.11.95:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=google.com&fp=chrome&pbk=q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l&sid=a1b2c3d4&type=tcp#🇫🇮 Finland - Helsinki 03`;
+    // Вместо ссылки на сайт мы зашиваем сюда чистую Base64 VPN-подписку со странами
+    const vpnConfig = 
+        'vless://8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c@194.135.24.81:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=google.com&fp=chrome&pbk=q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l&sid=a1b2c3d4&type=tcp#🇩🇪 Germany - Frankfurt 01\n' +
+        'vless://8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c@195.122.31.42:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=google.com&fp=chrome&pbk=q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l&sid=a1b2c3d4&type=tcp#🇳🇱 Netherlands - Amsterdam 02';
 
-        // Кодируем список в Base64 формат, чтобы Happ не ругался на валидность
-        const base64Config = Buffer.from(vpnConfig).toString('base64');
-        return res.send(base64Config);
-    }
-    
+    // Кодируем в Base64, чтобы Happ на iPhone принял её за 1 секунду
+    const base64Config = Buffer.from(vpnConfig).toString('base64');
+
+    // Передаем в шаблон Base64 строку вместо ссылки на сайт
+    res.send(templateBuilder.renderCabinet(userCode, base64Config));
+});
+
     // Если зашли через обычный браузер — показываем красивый личный кабинет
     const domain = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `https://vless-ez.vercel.app`;
     // Кнопка на сайте теперь ведет на этот же самый уникальный адрес!
