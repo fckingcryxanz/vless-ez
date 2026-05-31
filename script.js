@@ -1,26 +1,27 @@
 const currentUrl = window.location.href;
 const configRawUrl = currentUrl.endsWith('/') ? currentUrl + 'configs.txt' : currentUrl + '/configs.txt';
 
-// База данных инструкций под разные ОС
-const osInstructions = {
-    ios: "Для iOS: Нажмите кнопку ниже, чтобы сгенерировать и установить индивидуальный профиль конфигурации в настройки вашего iPhone.",
-    android: "Для Android: Нажмите кнопку ниже — мобильное приложение Happ автоматически откроется и загрузит вашу личную DNS-подписку.",
-    windows: "Для Windows: Скачайте клиент по кнопке ниже, импортируйте подписку и включите системный TUN-режим.",
-    linux: "Для Linux: Скопируйте URL вашей подписки и импортируйте её в консольный или GUI клиент через настройки.",
-    macos: "Для macOS: Используйте совместимый Xray-клиент, добавив полученный URL адрес в список подписок."
+// Ссылки на скачивание Happ для разных платформ
+const downloadLinks = {
+    android: "https://github.com", // Ссылка на гитхаб Happ
+    ios: "https://apple.com", 
+    windows: "https://github.com",
+    linux: "https://github.com",
+    macos: "https://github.com"
 };
 
 const osSelect = document.getElementById('os-dropdown');
-const instructionText = document.getElementById('instruction-text');
+const downloadButtonLink = document.getElementById('download-app-btn');
 const happBtn = document.getElementById('happ-link');
 
-// Функция смены инструкций
-if (osSelect && instructionText) {
+if (osSelect && downloadButtonLink) {
     osSelect.addEventListener('change', (e) => {
         const selectedOS = e.target.value;
-        instructionText.textContent = osInstructions[selectedOS];
         
-        // Меняем ссылки в зависимости от ОС, если нужно
+        // Меняем ссылку кнопки скачивания приложения
+        downloadButtonLink.href = downloadLinks[selectedOS] || "#";
+        
+        // Корректируем импорт подписки для iOS через веб-сервис
         if (selectedOS === 'ios') {
             happBtn.href = `https://notjakob.com{configRawUrl}`;
         } else {
@@ -29,12 +30,14 @@ if (osSelect && instructionText) {
     });
 }
 
-// Кнопка копирования
+// Первичная инициализация ссылок
+if (happBtn) happBtn.href = `happ://sub/add/${configRawUrl}`;
+
 const copyBtn = document.getElementById('copy-raw');
 if (copyBtn) {
     copyBtn.addEventListener('click', () => {
         navigator.clipboard.writeText(configRawUrl).then(() => {
-            alert('Ссылка успешно скопирована!');
+            alert('Ссылка на подписку успешно скопирована!');
         });
     });
 }
