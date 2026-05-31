@@ -63,7 +63,7 @@ app.get('/user/:code', (req, res) => {
         // Собираем конструктор воедино
         let compiledHtml = template
             .replace(/\{\{USER_CODE\}\}/g, userCode)
-            .replace(/\{\.DOMAIN\}\}/g, domain)
+            .replace(/\{\{DOMAIN\}\}/g, domain)
             .replace(/\{\{HEADER\}\}/g, header)
             .replace(/\{\{USER_INFO\}\}/g, userInfo)
             .replace(/\{\{STEP_1\}\}/g, step1)
