@@ -1,0 +1,13 @@
+{
+  "name": "async",
+  "version": "1.0.0",
+  "description": "Telegram bot + Dynamic subscription page",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "telegraf": "^4.16.3"
+  }
+}
