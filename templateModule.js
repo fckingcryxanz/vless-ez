@@ -1,6 +1,6 @@
 function renderCabinet(userCode, configUrl) {
-    // Вырезаем https:// из начала ссылки, чтобы deeplink для Happ генерировался без багов
-    const cleanConfigUrl = configUrl.replace('https://', '').replace('http://', '');
+    // Формируем железобетонную универсальную ссылку через мост подписок, которая работает везде
+    const universalHappLink = `https://notjakob.com{configUrl}`;
 
     return `
     <!DOCTYPE html>
@@ -84,8 +84,8 @@ function renderCabinet(userCode, configUrl) {
                     <div class="guide-content">
                         <div class="guide-h4">Добавление подписки</div>
                         <p>Нажмите кнопку ниже — приложение откроется, и подписка добавится автоматически.</p>
-                        <!-- Исправлено: Ссылка по умолчанию формируется без https:// внутриdeeplink -->
-                        <a href="happ://sub/add/${cleanConfigUrl}" id="happ-link" class="btn-submit">Добавить подписку</a>
+                        <!-- Направляем пользователя через рабочий универсальный мост -->
+                        <a href="${universalHappLink}" id="happ-link" class="btn-submit">Добавить подписку</a>
                     </div>
                 </div>
                 <div class="guide-card">
@@ -104,9 +104,8 @@ function renderCabinet(userCode, configUrl) {
         const downloadAppBtn = document.getElementById('download-app-btn');
         const happLink = document.getElementById('happ-link');
         
-        // Переменные для корректных путей
         const baseConfigUrl = "${configUrl}";
-        const cleanUrl = "${cleanConfigUrl}";
+        const universalLink = "${universalHappLink}";
         
         const storeLinks = { 
             android: "https://google.com", 
@@ -120,12 +119,8 @@ function renderCabinet(userCode, configUrl) {
                 osBtnText.textContent = storeNames[val] || "Скачать";
                 downloadAppBtn.href = storeLinks[val] || "https://github.com";
                 
-                // Железобетонное разделение логики iOS (через веб-сайт) и Android/PC (напрямую через чистый deeplink)
-                if (val === 'ios') { 
-                    happLink.href = "https://notjakob.com" + baseConfigUrl; 
-                } else { 
-                    happLink.href = "happ://sub/add/" + cleanUrl; 
-                }
+                // Мост ://notjakob.com идеально работает на всех платформах одинаково
+                happLink.href = "https://://notjakob.com/#" + baseConfigUrl;
             });
         }
         
