@@ -10,7 +10,7 @@ app.use(express.urlencoded({ extended: true }));
 // 1. НАСТРОЙКА TELEGRAM-БОТА
 const bot = new Telegraf(process.env.BOT_TOKEN || 'ЗАГЛУШКА_ТОКЕНА');
 
-// Генератор логина: 25 символов (буквы + цифры + строго ОДНО подчеркивание)
+// Генератор уникального логина: буквы + цифры + строго ОДНО подчеркивание
 function generateComplexLogin() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let result = '';
@@ -19,15 +19,6 @@ function generateComplexLogin() {
     }
     const underscorePos = Math.floor(Math.random() * 22) + 1;
     return result.slice(0, underscorePos) + '_' + result.slice(underscorePos);
-}
-
-// Новый генератор пароля по твоему правилу: AsyncDNS$ + 15 случайных цифр
-function generateAsyncPassword() {
-    let digits = '';
-    for (let i = 0; i < 15; i++) {
-        digits += Math.floor(Math.random() * 10).toString();
-    }
-    return `AsyncDNS$${digits}`;
 }
 
 bot.start((ctx) => {
@@ -43,16 +34,20 @@ bot.start((ctx) => {
 });
 
 bot.action('connect', async (ctx) => {
-    const userLogin = generateComplexLogin();
-    const userPassword = generateAsyncPassword(); // Генерируем новый кастомный пароль
+    const userLogin = generateComplexLogin(); 
+    // Генерируем 15 случайных цифр для хвоста пароля по твоему правилу
+    let randomDigits = '';
+    for (let i = 0; i < 15; i++) {
+        randomDigits += Math.floor(Math.random() * 10).toString();
+    }
+    const userPassword = `AsyncDNS$${randomDigits}`; 
+    
+    // Склеиваем логин и секретные цифры пароля через разделитель "X" для бесскриптовой проверки
+    const finalLogin = `${userLogin}X${randomDigits}`;
     const domain = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `https://vercel.app`;
     
-    // Кодируем связку логина и уникального хвоста пароля, чтобы пустить на сайт без бд
-    const secretKey = userPassword.replace('AsyncDNS$', '');
-    const cryptedLogin = `${userLogin}X${secretKey}`;
-
     await ctx.answerCbQuery();
-    await ctx.reply(`✨ Ваши уникальные данные для входа сгенерированы!\n\n🌐 Наш сайт: ${domain}\n\n👤 Логин: \`${cryptedLogin}\`\n🔑 Пароль: \`${userPassword}\`\n\n⚠️ Скопируйте логин и новый пароль, после чего вставьте их на сайте для входа.`);
+    await ctx.reply(`✨ Ваши уникальные данные для входа сгенерированы!\n\n🌐 Наш сайт: ${domain}\n\n👤 Логин: \`${finalLogin}\`\n🔑 Пароль: \`${userPassword}\`\n\n⚠️ Скопируйте логин и пароль, после чего вставьте их на сайте для входа.`);
 });
 
 app.post('/api/webhook', (req, res) => {
@@ -73,22 +68,24 @@ app.get('/', (req, res) => {
     res.send(templateBuilder.renderLoginPage(''));
 });
 
-// Проверка новой формы логина и пароля AsyncDNS$
+// Железобетонная проверка формы без базы данных
 app.post('/login', (req, res) => {
     const username = req.body.username ? req.body.username.trim() : '';
     const password = req.body.password ? req.body.password.trim() : '';
     
-    // Проверяем маску пароля AsyncDNS$ и длину хвоста из 15 цифр
+    // Проверяем, что пароль начинается на AsyncDNS$ и имеет длину 24 символа (9 букв + 15 цифр)
     if (password.startsWith('AsyncDNS$') && password.length === 24) {
-        const secretKey = password.replace('AsyncDNS$', '');
+        const passwordDigits = password.replace('AsyncDNS$', ''); // Вытаскиваем 15 цифр
         
-        // Сверяем зашитый ключ внутри логина
-        if (username.endsWith(`X${secretKey}`)) {
-            return res.redirect(`/user/${username.split('X')[0]}`);
+        // Проверяем, заканчивается ли логин строго на "X" + эти 15 цифр из пароля
+        if (username.endsWith(`X${passwordDigits}`)) {
+            // Если всё верно — пускаем в кабинет, отрезая технический хвост
+            const cleanUserCode = username.split('X')[0];
+            return res.redirect(`/user/${cleanUserCode}`);
         }
     }
     
-    res.send(templateBuilder.renderLoginPage('Неверный логин или новый формат пароля. Проверьте данные из бота.'));
+    res.send(templateBuilder.renderLoginPage('Неверный логин или пароль. Проверьте данные из бота.'));
 });
 
 app.get('/user/:code', (req, res) => {
@@ -101,10 +98,10 @@ app.get('/user/:code', (req, res) => {
 
 app.get('/configs.txt', (req, res) => {
     res.set('Content-Type', 'text/plain');
-    res.send("vless://рабочий_ключ_прокси_запущен");
+    res.send("vless://рабочий_прокси_ключ_запущен");
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log('Сервер успешно работает'));
+app.listen(PORT, () => console.log('Сервер запущен'));
 
 module.exports = app;
