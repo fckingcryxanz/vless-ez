@@ -1,4 +1,7 @@
 function renderCabinet(userCode, configUrl) {
+    // Вырезаем https:// из начала ссылки, чтобы deeplink для Happ генерировался без багов
+    const cleanConfigUrl = configUrl.replace('https://', '').replace('http://', '');
+
     return `
     <!DOCTYPE html>
     <html lang="ru">
@@ -73,8 +76,7 @@ function renderCabinet(userCode, configUrl) {
                     <div class="guide-content">
                         <div class="guide-h4">Установка приложения</div>
                         <p>Выберите подходящую версию для вашего устройства, нажмите на кнопку ниже и установите приложение.</p>
-                        <!-- Стартовая ссылка по умолчанию на новый Google Play Happ -->
-                        <a href="https://play.google.com/store/apps/details?id=com.happproxy&hl=en" id="download-app-btn" target="_blank" class="btn-action"><span id="os-button-text">Google Play</span></a>
+                        <a href="https://google.com" id="download-app-btn" target="_blank" class="btn-action"><span id="os-button-text">Google Play</span></a>
                     </div>
                 </div>
                 <div class="guide-card">
@@ -82,7 +84,8 @@ function renderCabinet(userCode, configUrl) {
                     <div class="guide-content">
                         <div class="guide-h4">Добавление подписки</div>
                         <p>Нажмите кнопку ниже — приложение откроется, и подписка добавится автоматически.</p>
-                        <a href="happ://sub/add/${configUrl}" id="happ-link" class="btn-submit">Добавить подписку</a>
+                        <!-- Исправлено: Ссылка по умолчанию формируется без https:// внутриdeeplink -->
+                        <a href="happ://sub/add/${cleanConfigUrl}" id="happ-link" class="btn-submit">Добавить подписку</a>
                     </div>
                 </div>
                 <div class="guide-card">
@@ -100,31 +103,35 @@ function renderCabinet(userCode, configUrl) {
         const osBtnText = document.getElementById('os-button-text');
         const downloadAppBtn = document.getElementById('download-app-btn');
         const happLink = document.getElementById('happ-link');
-        const configUrl = "${configUrl}";
         
-        // Обновленные новые официальные ссылки на Happ из твоего сообщения
+        // Переменные для корректных путей
+        const baseConfigUrl = "${configUrl}";
+        const cleanUrl = "${cleanConfigUrl}";
+        
         const storeLinks = { 
-            android: "https://play.google.com/store/apps/details?id=com.happproxy&hl=en", 
-            ios: "https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973" 
+            android: "https://google.com", 
+            ios: "https://apple.com" 
         };
-        
         const storeNames = { android: "Google Play", ios: "App Store", windows: "Windows (GitHub)", linux: "Linux (GitHub)", macos: "macOS (GitHub)" };
         
-        if (osSelect && downloadAppBtn && osBtnText) {
+        if (osSelect && downloadAppBtn && osBtnText && happLink) {
             osSelect.addEventListener('change', (e) => {
                 const val = e.target.value;
                 osBtnText.textContent = storeNames[val] || "Скачать";
                 downloadAppBtn.href = storeLinks[val] || "https://github.com";
                 
-                // Исправлено: передаем прямую ссылку на кабинет в прокси-утилиту iOS
+                // Железобетонное разделение логики iOS (через веб-сайт) и Android/PC (напрямую через чистый deeplink)
                 if (val === 'ios') { 
-                    happLink.href = "https://notjakob.com" + configUrl; 
+                    happLink.href = "https://notjakob.com" + baseConfigUrl; 
                 } else { 
-                    happLink.href = "happ://sub/add/" + configUrl.replace('https://', ''); 
+                    happLink.href = "happ://sub/add/" + cleanUrl; 
                 }
             });
         }
-        document.getElementById('copy-raw').addEventListener('click', () => { navigator.clipboard.writeText(configUrl).then(() => { alert('Ссылка скопирована!'); }); });
+        
+        document.getElementById('copy-raw').addEventListener('click', () => { 
+            navigator.clipboard.writeText(baseConfigUrl).then(() => { alert('Ссылка скопирована!'); }); 
+        });
     </script>
     </body>
     </html>
