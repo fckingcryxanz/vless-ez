@@ -1,17 +1,41 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Мой Telegram Mini App</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Моя Подписка V2Ray</title>
+    <style>
+        body { background-color: #0b0f19; color: #f3f4f6; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background-color: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 24px; width: 90%; max-width: 500px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); }
+        .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1f2937; padding-bottom: 16px; margin-bottom: 20px; }
+        .title { font-size: 20px; font-weight: bold; color: #38bdf8; }
+        .status-box { background-color: #1f2937; border-radius: 12px; padding: 16px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .status-item { font-size: 14px; color: #9ca3af; }
+        .status-value { font-size: 16px; font-weight: bold; color: #f3f4f6; margin-top: 4px; }
+        .status-active { color: #10b981; }
+        .btn { background-color: #0284c7; color: white; border: none; border-radius: 12px; padding: 14px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; display: block; box-sizing: border-box; margin-top: 10px; transition: 0.2s; }
+        .btn:hover { background-color: #0369a1; }
+        .apps-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; color: #9ca3af; }
+    </style>
 </head>
 <body>
-  <h1>Привет, Telegram Mini App!</h1>
-  <p id="status">Проверка лимита...</p>
-  <button id="btn">Сделать запрос (ограничено 100 в день)</button>
-
-  <script src="app.js"></script>
+    <div class="card">
+        <div class="header">
+            <div class="title">||| Личный Кабинет DNS</div>
+        </div>
+        <div class="status-box">
+            <div>
+                <div class="status-item">Статус</div>
+                <div class="status-value status-active">● Активна</div>
+            </div>
+            <div>
+                <div class="status-item">Трафик</div>
+                <div class="status-value">Безлимит</div>
+            </div>
+        </div>
+        <div class="apps-title">Установка и настройка:</div>
+        <!-- Кнопка автоматического добавления подписки прямо в Happ -->
+        <a href="happ://sub/add/https://github.io" class="btn">⚡ Добавить подписку в Happ</a>
+    </div>
 </body>
 </html>
