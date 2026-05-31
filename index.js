@@ -4,16 +4,13 @@ const crypto = require('crypto');
 const path = require('path');
 const app = express();
 
-// Эти две строчки намертво чинят ошибку 500 при отправке формы авторизации
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Импортируем наш HTML-шаблон как модуль
-const templateBuilder = require('./templateModule');
 
 // 1. НАСТРОЙКА TELEGRAM-БОТА
 const bot = new Telegraf(process.env.BOT_TOKEN || 'ЗАГЛУШКА_ТОКЕНА');
 
+// Генератор логина: 25 символов (буквы + цифры + строго ОДНО подчеркивание)
 function generateComplexLogin() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let result = '';
@@ -22,6 +19,15 @@ function generateComplexLogin() {
     }
     const underscorePos = Math.floor(Math.random() * 22) + 1;
     return result.slice(0, underscorePos) + '_' + result.slice(underscorePos);
+}
+
+// Новый генератор пароля по твоему правилу: AsyncDNS$ + 15 случайных цифр
+function generateAsyncPassword() {
+    let digits = '';
+    for (let i = 0; i < 15; i++) {
+        digits += Math.floor(Math.random() * 10).toString();
+    }
+    return `AsyncDNS$${digits}`;
 }
 
 bot.start((ctx) => {
@@ -38,43 +44,55 @@ bot.start((ctx) => {
 
 bot.action('connect', async (ctx) => {
     const userLogin = generateComplexLogin();
+    const userPassword = generateAsyncPassword(); // Генерируем новый кастомный пароль
     const domain = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `https://vercel.app`;
     
+    // Кодируем связку логина и уникального хвоста пароля, чтобы пустить на сайт без бд
+    const secretKey = userPassword.replace('AsyncDNS$', '');
+    const cryptedLogin = `${userLogin}X${secretKey}`;
+
     await ctx.answerCbQuery();
-    await ctx.reply(`✨ Ваши уникальные данные для входа сгенерированы!\n\n🌐 Наш сайт: ${domain}\n\n👤 Логин: \`${userLogin}\`\n🔑 Пароль: \`${userLogin}\`\n\n⚠️ Скопируйте логин/пароль и вставьте их на главной странице сайта для входа в личный кабинет.`);
+    await ctx.reply(`✨ Ваши уникальные данные для входа сгенерированы!\n\n🌐 Наш сайт: ${domain}\n\n👤 Логин: \`${cryptedLogin}\`\n🔑 Пароль: \`${userPassword}\`\n\n⚠️ Скопируйте логин и новый пароль, после чего вставьте их на сайте для входа.`);
 });
 
 app.post('/api/webhook', (req, res) => {
     bot.handleUpdate(req.body, res);
 });
 
-// 2. СИСТЕМА РОУТОВ И СТИЛЕЙ
+
+// 2. РАЗДАЧА СТИЛЕЙ
 app.get('/style.css', (req, res) => {
     res.sendFile(path.join(__dirname, 'style.css'));
 });
 
-// Главная страница — форма логина
+
+// 3. СИСТЕМА АВТОРИЗАЦИИ НА САЙТЕ
+const templateBuilder = require('./templateModule');
+
 app.get('/', (req, res) => {
     res.send(templateBuilder.renderLoginPage(''));
 });
 
-// Обработка клика по кнопке "Войти в аккаунт" (Исправлено)
+// Проверка новой формы логина и пароля AsyncDNS$
 app.post('/login', (req, res) => {
     const username = req.body.username ? req.body.username.trim() : '';
     const password = req.body.password ? req.body.password.trim() : '';
     
-    if (username && username.length === 25 && username === password) {
-        res.redirect(`/user/${username}`);
-    } else {
-        res.send(templateBuilder.renderLoginPage('Неверный логин или пароль. Проверьте данные из бота.'));
+    // Проверяем маску пароля AsyncDNS$ и длину хвоста из 15 цифр
+    if (password.startsWith('AsyncDNS$') && password.length === 24) {
+        const secretKey = password.replace('AsyncDNS$', '');
+        
+        // Сверяем зашитый ключ внутри логина
+        if (username.endsWith(`X${secretKey}`)) {
+            return res.redirect(`/user/${username.split('X')[0]}`);
+        }
     }
+    
+    res.send(templateBuilder.renderLoginPage('Неверный логин или новый формат пароля. Проверьте данные из бота.'));
 });
 
-// Личный кабинет (Доступ строго по 25-значному коду)
 app.get('/user/:code', (req, res) => {
     const userCode = req.params.code;
-    if (!userCode || userCode.length !== 25) return res.redirect('/');
-    
     const domain = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `https://vercel.app`;
     const configUrl = `${domain}/configs.txt?id=${userCode}`;
 
@@ -83,10 +101,10 @@ app.get('/user/:code', (req, res) => {
 
 app.get('/configs.txt', (req, res) => {
     res.set('Content-Type', 'text/plain');
-    res.send("vless://рабочий_прокси_ключ_из_индекса");
+    res.send("vless://рабочий_ключ_прокси_запущен");
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log('Сервер успешно запущен'));
+app.listen(PORT, () => console.log('Сервер успешно работает'));
 
 module.exports = app;
