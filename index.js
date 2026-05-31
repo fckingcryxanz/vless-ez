@@ -1,86 +1,46 @@
 const express = require('express');
-const { Telegraf, Markup } = require('telegraf');
 const path = require('path');
 const app = express();
 
-// Активируем чтение POST-данных из форм авторизации сайта
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 1. НАСТРОЙКА TELEGRAM-БОТА
-const bot = new Telegraf(process.env.BOT_TOKEN || 'ЗАГЛУШКА_ТОКЕНА');
+// Импортируем наши внешние подфайлы-модули
+const templateBuilder = require('./templateModule');
+const { initBot } = require('./botModule');
 
-bot.start((ctx) => {
-    ctx.reply('Привет! 👋\n\n🛡️ Oneok — включил и забыл.\n\n🚀 Мгновенная активация\n✅ Гибкие тарифы\n▶️ YouTube без рекламы', 
-        Markup.inlineKeyboard([
-            [Markup.button.callback('Получить данные для входа 🔑', 'connect')],
-            [Markup.button.callback('💳 Продлить подписку', 'renew')],
-            [Markup.button.callback('📱 Инструкция', 'help'), Markup.button.callback('🎁 Бонусы', 'bonus')],
-            [Markup.button.url('👉 Наш канал 👈', 'https://t.me')],
-            [Markup.button.callback('ℹ️ О нас', 'about'), Markup.button.callback('💬 Поддержка', 'support')]
-        ])
-    );
-});
+// Инициализируем бота, передавая токен из панели Vercel
+const bot = initBot(process.env.BOT_TOKEN || 'ЗАГЛУШКА_ТОКЕНА');
 
-bot.action('connect', async (ctx) => {
-    const tgId = ctx.from.id; // Уникальный неизменяемый ID человека в Telegram
-    
-    // Формируем постоянные данные
-    const userLogin = `${tgId}_AsyncDNS`;
-    const userPassword = `AsyncDNS$${tgId}`;
-    
-    const domain = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `https://vercel.app`;
-    
-    await ctx.answerCbQuery();
-    
-    // Отправляем чистый HTML-текст, где тег <code> делает данные 100% кликабельными без багов
-    await ctx.reply(
-        `✨ <b>Ваши постоянные данные для входа готовы!</b>\n\n` +
-        `🌐 Наш сайт: ${domain}\n\n` +
-        `👤 Логин (нажми для копирования):\n<code>${userLogin}</code>\n\n` +
-        `🔑 Пароль (нажми для копирования):\n<code>${userPassword}</code>\n\n` +
-        `⚠️ Вставьте эти данные в форму LOGIN на главной странице сайта.`,
-        { parse_mode: 'HTML' }
-    );
-});
-
+// Эндпоинт для связи серверов Telegram и Vercel через Webhook
 app.post('/api/webhook', (req, res) => {
     bot.handleUpdate(req.body, res);
 });
 
-
-// 2. РАЗДАЧА СТИЛЕЙ ИЗ КОРНЯ
+// Раздача твоего файла style.css из корня репозитория (Оставляем строго!)
 app.get('/style.css', (req, res) => {
     res.sendFile(path.join(__dirname, 'style.css'));
 });
 
-
-// 3. СИСТЕМА АВТОРИЗАЦИИ НА САЙТЕ (ЖЕЛЕЗОБЕТОННЫЙ ЛОГИН)
-const templateBuilder = require('./templateModule');
-
+// Главная страница — форма авторизации (LOGIN)
 app.get('/', (req, res) => {
     res.send(templateBuilder.renderLoginPage(''));
 });
 
+// Обработка отправки данных из формы логина
 app.post('/login', (req, res) => {
     const username = req.body.username ? req.body.username.trim() : '';
     const password = req.body.password ? req.body.password.trim() : '';
     
-    // Алгоритм мгновенной проверки без базы данных:
-    // Вытаскиваем чистый Telegram ID из логина (всё, что до знака подчеркивания)
     const tgIdFromLogin = username.split('_')[0];
     
-    // Сверяем: 
-    // 1. Логин должен заканчиваться на _AsyncDNS
-    // 2. Пароль должен быть равен AsyncDNS$ + этот же Telegram ID
     if (username === `${tgIdFromLogin}_AsyncDNS` && password === `AsyncDNS$${tgIdFromLogin}`) {
-        // Успешный вход — пускаем в кабинет!
         return res.redirect(`/user/${username}`);
     }
-    
     res.send(templateBuilder.renderLoginPage('Неверный логин или пароль. Скопируйте данные из бота.'));
 });
 
+// Личный кабинет Marzban со шрифтом Inter
 app.get('/user/:code', (req, res) => {
     const userCode = req.params.code;
     const domain = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `https://vercel.app`;
@@ -89,12 +49,13 @@ app.get('/user/:code', (req, res) => {
     res.send(templateBuilder.renderCabinet(userCode, configUrl));
 });
 
+// Текстовая раздача подписки для Happ
 app.get('/configs.txt', (req, res) => {
     res.set('Content-Type', 'text/plain');
     res.send("vless://рабочий_прокси_ключ_успешно_запущен_в_happ");
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log('Сервер успешно работает'));
+app.listen(PORT, () => console.log('Бэкенд-серверExpress успешно запущен'));
 
 module.exports = app;
