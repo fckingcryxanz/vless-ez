@@ -1,7 +1,4 @@
 function renderCabinet(userCode, configUrl) {
-    // Формируем железобетонную универсальную ссылку через мост подписок, которая работает везде
-    const universalHappLink = `https://notjakob.com{configUrl}`;
-
     return `
     <!DOCTYPE html>
     <html lang="ru">
@@ -84,8 +81,8 @@ function renderCabinet(userCode, configUrl) {
                     <div class="guide-content">
                         <div class="guide-h4">Добавление подписки</div>
                         <p>Нажмите кнопку ниже — приложение откроется, и подписка добавится автоматически.</p>
-                        <!-- Направляем пользователя через рабочий универсальный мост -->
-                        <a href="${universalHappLink}" id="happ-link" class="btn-submit">Добавить подписку</a>
+                        <!-- Кнопка по умолчанию (для Android) настроена напрямую -->
+                        <a href="happ://sub/add/${configUrl.replace('https://', '').replace('http://', '')}" id="happ-link" class="btn-submit">Добавить подписку</a>
                     </div>
                 </div>
                 <div class="guide-card">
@@ -105,7 +102,7 @@ function renderCabinet(userCode, configUrl) {
         const happLink = document.getElementById('happ-link');
         
         const baseConfigUrl = "${configUrl}";
-        const universalLink = "${universalHappLink}";
+        const cleanUrl = baseConfigUrl.replace('https://', '').replace('http://', '');
         
         const storeLinks = { 
             android: "https://google.com", 
@@ -119,8 +116,12 @@ function renderCabinet(userCode, configUrl) {
                 osBtnText.textContent = storeNames[val] || "Скачать";
                 downloadAppBtn.href = storeLinks[val] || "https://github.com";
                 
-                // Мост ://notjakob.com идеально работает на всех платформах одинаково
-                happLink.href = "https://://notjakob.com/#" + baseConfigUrl;
+                // Исправлено для iPhone: при выборе iOS ссылка на кнопке меняется СРАЗУ, до клика
+                if (val === 'ios') { 
+                    happLink.setAttribute('href', "https://notjakob.com" + baseConfigUrl);
+                } else { 
+                    happLink.setAttribute('href', "happ://sub/add/" + cleanUrl);
+                }
             });
         }
         
