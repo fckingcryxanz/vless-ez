@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const path = require('path');
 const app = express();
 
-// Импортируем только HTML-шаблон
+// Импортируем готовый HTML-модуль (подфайл)
 const templateBuilder = require('./templateModule');
 
 app.use(express.json());
@@ -42,27 +42,29 @@ app.post('/api/webhook', (req, res) => {
 });
 
 
-// 2. РАЗДАЧА ТВОЕГО ФАЙЛА style.css НАПРЯМУЮ
+// 2. РАЗДАЧА ТВОЕГО ФАЙЛА style.css ИЗ КОРНЯ
 app.get('/style.css', (req, res) => {
     res.sendFile(path.join(__dirname, 'style.css'));
 });
 
 
-// 3. ОТДАЧА СТРАНИЦЫ ИЗ HTML-МОДУЛЯ
+// 3. СТАБИЛЬНАЯ ГЕНЕРАЦИЯ СТРАНИЦЫ ИЗ ТВОЕГО МОДУЛЯ (БЕЗ СКЛЕЙКИ FS)
 app.get('/user/:code', (req, res) => {
     const userCode = req.params.code;
     const domain = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `https://vercel.app`;
     const configUrl = `${domain}/configs.txt?id=${userCode}`;
 
+    // Передаем данные в templateModule.js и мгновенно отдаем браузеру готовый HTML
     const htmlPage = templateBuilder(userCode, configUrl);
     res.send(htmlPage);
 });
 
+// Отдачаconfigs.txt для приложения Happ
 app.get('/configs.txt', (req, res) => {
     res.sendFile(path.join(__dirname, 'configs.txt'));
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log('Сервер запущен'));
+app.listen(PORT, () => console.log('Сервер успешно перезапущен'));
 
 module.exports = app;
