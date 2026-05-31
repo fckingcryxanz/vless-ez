@@ -49,20 +49,21 @@ app.get('/user/:code', (req, res) => {
     res.send(templateBuilder.renderCabinet(userCode, configUrl));
 });
 
-// Текстовая раздача подписки для Happ
-// Выдача файла конфигурации со списком стран для приложения Happ
+// Выдача файла конфигурации со списком стран для приложения Happ (Исправлено)
 app.get('/configs.txt', (req, res) => {
     res.set('Content-Type', 'text/plain; charset=utf-8');
     
-    // Сюда зашиты 3 тестовых сервера. Happ прочитает их и выведет списком как 3 флага!
+    // Твой список серверов со странами
     const testServers = 
         `vless://8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c@194.135.24.81:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=google.com&fp=chrome&pbk=q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l&sid=a1b2c3d4&type=tcp#🇩🇪 Germany - Frankfurt 01\n` +
         `vless://8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c@195.122.31.42:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=google.com&fp=chrome&pbk=q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l&sid=a1b2c3d4&type=tcp#🇫🇮 Finland - Helsinki 02\n` +
         `vless://8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c@185.200.11.95:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=google.com&fp=chrome&pbk=q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l&sid=a1b2c3d4&type=tcp#🇳🇱 Netherlands - Amsterdam 03`;
 
-    res.send(testServers);
-});
+    // Переводим обычный текст в кодировку Base64, которую требует Happ
+    const base64Servers = Buffer.from(testServers).toString('base64');
 
+    res.send(base64Servers);
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log('Бэкенд-серверExpress успешно запущен'));
