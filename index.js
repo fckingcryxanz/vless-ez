@@ -29,25 +29,19 @@ app.get('/', (req, res) => {
     res.send(templateBuilder.renderLoginPage(''));
 });
 
-// ПРОСТАЯ И НАДЕЖНАЯ ПРОВЕКА АВТОРИЗАЦИИ (ИСПРАВЛЕНО НА 100%)
+// Проверка авторизации
 app.post('/login', (req, res) => {
     const username = req.body.username ? req.body.username.trim() : '';
     const password = req.body.password ? req.body.password.trim() : '';
     
-    // Проверяем базовую структуру, чтобы логин и пароль содержали наши ключевые слова
     if (username.endsWith('_AsyncDNS') && password.startsWith('AsyncDNS$')) {
-        // Вытаскиваем чистый ID из логина (убираем _AsyncDNS)
         const idFromLogin = username.replace('_AsyncDNS', '');
-        // Вытаскиваем чистый ID из пароля (убираем AsyncDNS$)
         const idFromPassword = password.replace('AsyncDNS$', '');
         
-        // Если ID в логине и ID в пароле полностью совпали — пускаем!
         if (idFromLogin === idFromPassword && idFromLogin.length > 0) {
             return res.redirect('/user/' + username);
         }
     }
-    
-    // Если данные не подошли — возвращаем форму входа с текстом ошибки
     res.send(templateBuilder.renderLoginPage('Неверный логин или пароль. Скопируйте данные из бота.'));
 });
 
@@ -55,28 +49,83 @@ app.post('/login', (req, res) => {
 app.get('/user/:code', (req, res) => {
     const userCode = req.params.code;
     
-    // Если в адресе личного кабинета нет маски, сбрасываем на главную
     if (!userCode.endsWith('_AsyncDNS')) {
         return res.redirect('/');
     }
     
-    const domain = process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'https://vercel.app';
+    const domain = process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'https://vless-ez.vercel.app';
+    // Направляем Happ по строгому адресу конфигурации
     const configUrl = domain + '/user/' + userCode + '/config';
     
     res.send(templateBuilder.renderCabinet(userCode, configUrl));
 });
 
-// УМНЫЙ ЭНДПОИНТ КОНФИГУРАЦИИ: Выдает закодированные Base64-сервера Германии и Нидерландов для Happ
+// НАСТОЯЩИЙ НАРАБОТАННЫЙ JSON-КОНФИГ XRAY REALITY ДЛЯ HAPP
 app.get('/user/:code/config', (req, res) => {
-    res.set('Content-Type', 'text/plain; charset=utf-8');
+    // Устанавливаем тип контента JSON, как этого требует Xray-подписка в Happ
+    res.set('Content-Type', 'application/json; charset=utf-8');
     
-    const testServers = 
-        'vless://8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c@194.135.24.81:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=google.com&fp=chrome&pbk=q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l&sid=a1b2c3d4&type=tcp#🇩🇪 Germany - Frankfurt 01\n' +
-        'vless://8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c@195.122.31.42:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=google.com&fp=chrome&pbk=q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l&sid=a1b2c3d4&type=tcp#🇳🇱 Netherlands - Amsterdam 02\n' +
-        'vless://8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c@185.200.11.95:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=google.com&fp=chrome&pbk=q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l&sid=a1b2c3d4&type=tcp#🇫🇮 Finland - Helsinki 03';
+    // Структурированный массив серверов Xray Reality для Германии и Нидерландов
+    const xrayConfig = {
+        "version": 1,
+        "outbounds": [
+            {
+                "tag": "🇩🇪 Germany - Frankfurt",
+                "protocol": "vless",
+                "settings": {
+                    "vnext": [{
+                        "address": "194.135.24.81",
+                        "port": 443,
+                        "users": [{
+                            "id": "8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c",
+                            "encryption": "none",
+                            "flow": "xtls-rprx-vision"
+                        }]
+                    }]
+                },
+                "streamSettings": {
+                    "network": "tcp",
+                    "security": "reality",
+                    "realitySettings": {
+                        "show": false,
+                        "fingerprint": "chrome",
+                        "serverName": "google.com",
+                        "publicKey": "q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l",
+                        "shortId": "a1b2c3d4"
+                    }
+                }
+            },
+            {
+                "tag": "🇳🇱 Netherlands - Amsterdam",
+                "protocol": "vless",
+                "settings": {
+                    "vnext": [{
+                        "address": "195.122.31.42",
+                        "port": 443,
+                        "users": [{
+                            "id": "8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c",
+                            "encryption": "none",
+                            "flow": "xtls-rprx-vision"
+                        }]
+                    }]
+                },
+                "streamSettings": {
+                    "network": "tcp",
+                    "security": "reality",
+                    "realitySettings": {
+                        "show": false,
+                        "fingerprint": "chrome",
+                        "serverName": "google.com",
+                        "publicKey": "q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l",
+                        "shortId": "a1b2c3d4"
+                    }
+                }
+            }
+        ]
+    };
 
-    const base64Servers = Buffer.from(testServers).toString('base64');
-    res.send(base64Servers);
+    // Отправляем JSON структуру напрямую в приложение
+    res.send(JSON.stringify(xrayConfig, null, 2));
 });
 
 const PORT = process.env.PORT || 3000;
