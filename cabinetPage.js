@@ -1,4 +1,7 @@
 module.exports = function(userCode, configUrl) {
+    // Вырезаем протокол https://, чтобы deeplink для Happ собирался по официальному стандарту утилиты
+    const cleanUrl = configUrl.replace('https://', '').replace('http://', '');
+
     return `
     <!DOCTYPE html>
     <html lang="ru">
@@ -81,7 +84,8 @@ module.exports = function(userCode, configUrl) {
                     <div class="guide-content">
                         <div class="guide-h4">Добавление подписки</div>
                         <p>Нажмите кнопку ниже — приложение откроется, и подписка добавится автоматически.</p>
-                        <a href="happ://sub/add/${configUrl.replace('https://', '')}" id="happ-link" class="btn-submit">Добавить подписку</a>
+                        <!-- Кнопка по умолчанию (для Android) вызывает нативный протокол Happ -->
+                        <a href="happ://sub/add/${cleanUrl}" id="happ-link" class="btn-submit">Добавить подписку</a>
                     </div>
                 </div>
                 <div class="guide-card">
@@ -101,7 +105,7 @@ module.exports = function(userCode, configUrl) {
         const happLink = document.getElementById('happ-link');
         
         const baseConfigUrl = "${configUrl}";
-        const cleanUrl = baseConfigUrl.replace('https://', '');
+        const cleanUrl = baseConfigUrl.replace('https://', '').replace('http://', '');
         
         const storeLinks = { 
             android: "https://google.com", 
@@ -115,25 +119,15 @@ module.exports = function(userCode, configUrl) {
                 osBtnText.textContent = storeNames[val] || "Скачать";
                 downloadAppBtn.href = storeLinks[val] || "https://github.com";
                 
-                if (val === 'ios') { 
-                    happLink.setAttribute('href', "sing-box://import-remote?url=" + encodeURIComponent(baseConfigUrl));
-                } else { 
-                    happLink.setAttribute('href', "happ://sub/add/" + cleanUrl);
-                }
+                // Исправлено: Для ВСЕХ операционных систем (включая iOS) ссылка СТРОГО вызывает оригинальный нативный Happ
+                happLink.setAttribute('href', "happ://sub/add/" + cleanUrl);
             });
         }
         
         document.getElementById('copy-raw').addEventListener('click', () => { 
             navigator.clipboard.writeText(baseConfigUrl).then(() => { alert('Ссылка скопирована!'); }); 
         });
-        window.addEventListener('DOMContentLoaded', () => { 
-            const deleteToolbar = () => { 
-                const toolbars = document.querySelectorAll('[id*="vercel-preview-feedback"], [class*="vercel"], vercel-live-feedback'); 
-                toolbars.forEach(el => el.remove()); 
-            }; 
-            deleteToolbar(); 
-            setTimeout(deleteToolbar, 1000); 
-        });
+        window.addEventListener('DOMContentLoaded', () => { const deleteToolbar = () => { const toolbars = document.querySelectorAll('[id*="vercel-preview-feedback"], [class*="vercel"], vercel-live-feedback'); toolbars.forEach(el => el.remove()); }; deleteToolbar(); setTimeout(deleteToolbar, 1000); });
     </script>
     </body>
     </html>
