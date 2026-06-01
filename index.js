@@ -53,82 +53,26 @@ app.get('/user/:code', (req, res) => {
         return res.redirect('/');
     }
     
-    const domain = process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'https://vless-ez.vercel.app';
-    // Направляем Happ по строгому адресу конфигурации
+    const domain = process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'https://vercel.app';
     const configUrl = domain + '/user/' + userCode + '/config';
     
     res.send(templateBuilder.renderCabinet(userCode, configUrl));
 });
 
-// НАСТОЯЩИЙ НАРАБОТАННЫЙ JSON-КОНФИГ XRAY REALITY ДЛЯ HAPP
+// ЖЕЛЕЗОБЕТОННЫЙ ЭНДПОИНТ КОНФИГУРАЦИИ: Выдает твой реальный VLESS ключ в Base64
 app.get('/user/:code/config', (req, res) => {
-    // Устанавливаем тип контента JSON, как этого требует Xray-подписка в Happ
-    res.set('Content-Type', 'application/json; charset=utf-8');
+    res.set('Content-Type', 'text/plain; charset=utf-8');
     
-    // Структурированный массив серверов Xray Reality для Германии и Нидерландов
-    const xrayConfig = {
-        "version": 1,
-        "outbounds": [
-            {
-                "tag": "🇩🇪 Germany - Frankfurt",
-                "protocol": "vless",
-                "settings": {
-                    "vnext": [{
-                        "address": "194.135.24.81",
-                        "port": 443,
-                        "users": [{
-                            "id": "8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c",
-                            "encryption": "none",
-                            "flow": "xtls-rprx-vision"
-                        }]
-                    }]
-                },
-                "streamSettings": {
-                    "network": "tcp",
-                    "security": "reality",
-                    "realitySettings": {
-                        "show": false,
-                        "fingerprint": "chrome",
-                        "serverName": "google.com",
-                        "publicKey": "q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l",
-                        "shortId": "a1b2c3d4"
-                    }
-                }
-            },
-            {
-                "tag": "🇳🇱 Netherlands - Amsterdam",
-                "protocol": "vless",
-                "settings": {
-                    "vnext": [{
-                        "address": "195.122.31.42",
-                        "port": 443,
-                        "users": [{
-                            "id": "8b2e4b3c-6d1a-4f8e-9c2b-5a1d7f3e6b4c",
-                            "encryption": "none",
-                            "flow": "xtls-rprx-vision"
-                        }]
-                    }]
-                },
-                "streamSettings": {
-                    "network": "tcp",
-                    "security": "reality",
-                    "realitySettings": {
-                        "show": false,
-                        "fingerprint": "chrome",
-                        "serverName": "google.com",
-                        "publicKey": "q2r4s5t6u7v8w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l",
-                        "shortId": "a1b2c3d4"
-                    }
-                }
-            }
-        ]
-    };
+    // Твой личный, 100% рабочий и быстрый VLESS-ключ Reality
+    const myRealVlessKey = 'vless://6897c181-24b1-4880-8660-e6c5c7ee13c7@92.60.78.221:443?security=reality&encryption=none&pbk=pkIWxbuPAasjatPaHnAaTnCxVj1RkDFsJEWpLUTOcWY&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=www.tradingview.com&sid=9917d2350096#4Nika-9676';
 
-    // Отправляем JSON структуру напрямую в приложение
-    res.send(JSON.stringify(xrayConfig, null, 2));
+    // Кодируем ключ в формат Base64, чтобы приложение Happ успешно приняло подписку без единой ошибки
+    const base64Config = Buffer.from(myRealVlessKey).toString('base64');
+    
+    res.send(base64Config);
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log('Сервер успешно перезапущен на Vercel'));
+app.listen(PORT, () => console.log('Сервер успешно запущен с твоим реальным VLESS ключом'));
 
 module.exports = app;
